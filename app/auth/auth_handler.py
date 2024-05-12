@@ -1,7 +1,6 @@
 # This file is responsible for signing , encoding , decoding and returning JWTS
 import time
 from typing import Dict
-
 import jwt
 from decouple import config
 

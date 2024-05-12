@@ -1,36 +1,11 @@
-#Twitter: Bek Brace
-#Instagram: Bek_Brace
-
 import uvicorn
 from fastapi import FastAPI, Body, Depends
-
 from app.model import PostSchema, UserSchema, UserLoginSchema
 from app.auth.auth_bearer import JWTBearer
 from app.auth.auth_handler import signJWT
-
-
-posts = [
-    {
-        "id": 1,
-        "title": "Penguins ",
-        "text": "Penguins are a group of aquatic flightless birds."
-    },
-    {
-        "id": 2,
-        "title": "Tigers ",
-        "text": "Tigers are the largest living cat species and a memeber of the genus panthera."
-    },
-    {
-        "id": 3,
-        "title": "Koalas ",
-        "text": "Koala is arboreal herbivorous maruspial native to Australia."
-    },
-]
-
-users = []
+from app.data import posts , users
 
 app = FastAPI()
-
 
 
 def check_user(data: UserLoginSchema):
@@ -39,22 +14,13 @@ def check_user(data: UserLoginSchema):
             return True
     return False
 
-
-# route handlers
-
-# testing
-@app.get("/", tags=["test"])
-def greet():
-    return {"hello": "world!."}
-
-
 # Get Posts
-@app.get("/posts", tags=["posts"])
+@app.get("/posts", tags=["Posts"])
 def get_posts():
     return { "data": posts }
 
-
-@app.get("/posts/{id}", tags=["posts"])
+# Get Single Post
+@app.get("/posts/{id}", tags=["Posts"])
 def get_single_post(id: int):
     if id > len(posts):
         return {
@@ -67,8 +33,8 @@ def get_single_post(id: int):
                 "data": post
             }
 
-
-@app.post("/posts", dependencies=[Depends(JWTBearer())], tags=["posts"])
+# Add Post
+@app.post("/posts", dependencies=[Depends(JWTBearer())], tags=["Posts"])
 def add_post(post: PostSchema):
     post.id = len(posts) + 1
     posts.append(post.dict())
@@ -76,13 +42,13 @@ def add_post(post: PostSchema):
         "data": "post added."
     }
 
-
+# User Signup
 @app.post("/user/signup", tags=["user"])
 def create_user(user: UserSchema = Body(...)):
-    users.append(user) # replace with db call, making sure to hash the password first
+    users.append(user)
     return signJWT(user.email)
 
-
+# User Signin
 @app.post("/user/login", tags=["user"])
 def user_login(user: UserLoginSchema = Body(...)):
     if check_user(user):

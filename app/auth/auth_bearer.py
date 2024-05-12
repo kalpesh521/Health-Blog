@@ -1,4 +1,4 @@
-#The goal of this file is to check whether the reques tis authorized or not [ verification of the proteced route]
+# this file is to check whether the reques tis authorized or not.
 from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
